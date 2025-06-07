@@ -1,14 +1,19 @@
-# Usamos una imagen de OpenJDK adecuada para Spring Boot
-FROM eclipse-temurin:21-jdk-alpine
-
-# Configuramos el directorio de trabajo en el contenedor
+# Etapa de compilación
+FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
 
-# Copiamos el archivo JAR del proyecto al contenedor
-COPY target/agify-api-0.0.1-SNAPSHOT.jar app.jar
+# Copiar todos los archivos del proyecto
+COPY . .
 
-# Expone el puerto en el que corre la aplicación
+# Compilar la aplicación (omitiendo pruebas para agilizar)
+RUN ./mvnw.cmd clean package -DskipTests
+
+# Etapa final
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /app
+
+# Copiar el artefacto JAR desde la etapa de compilación
+COPY --from=builder /app/target/agify-api-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
-
-# Comando para ejecutar la aplicación dentro del contenedor
 CMD ["java", "-jar", "app.jar"]
