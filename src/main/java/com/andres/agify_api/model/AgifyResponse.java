@@ -10,3 +10,5 @@ public record AgifyResponse(
     Integer count,
     String country_id
 ) {}
+
+//http://localhost:8080/api/age?name=Andrés&countryId=CO
