@@ -1,0 +1,33 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Construir proyecto
+        run: mvn clean package
+
+      - name: Ejecutar pruebas
+        run: mvn test
+
+      - name: Desplegar aplicación
+        if: success()
+        run: echo "Desplegando aplicación..."
