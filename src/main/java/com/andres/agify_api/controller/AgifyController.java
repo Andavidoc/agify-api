@@ -17,7 +17,8 @@ public class AgifyController {
     }
 
     @GetMapping("/api/age")
-    public Mono<AgifyResponse> predictAge(@RequestParam String name) {
-        return service.getPredictedAge(name);
+    public Mono<AgifyResponse> predictAge(@RequestParam String name,
+                                          @RequestParam(required = false) String countryId) {
+        return service.getPredictedAge(name, countryId);
     }
 }
