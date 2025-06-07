@@ -6,8 +6,7 @@ WORKDIR /app
 COPY . .
 
 # Compilar la aplicación (omitiendo pruebas para agilizar)
-RUN ./mvnw.cmd clean package -DskipTests
-
+RUN chmod +x mvnw && ./mvnw clean package -DskipTests
 # Etapa final
 FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /app
