@@ -13,16 +13,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
-import org.springframework.test.context.TestPropertySource; // Nueva importación
+import org.springframework.test.context.TestPropertySource;
+import static org.mockito.ArgumentMatchers.argThat; // Nueva importación para argThat
 
 @WebFluxTest(AgifyController.class)
-// Se añade @TestPropertySource para excluir auto-configuraciones comunes que pueden causar fallos en el contexto
-// Ajusta estas exclusiones según las dependencias reales de tu aplicación si el problema persiste.
 @TestPropertySource(properties = {
     "spring.autoconfigure.exclude=" +
-    "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration," + // Excluye configuración de DataSource
-    "org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration," + // Excluye configuración de JPA/Hibernate
-    "org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration" // Excluye Spring Security Reactivo si lo usas
+    "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration," +
+    "org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration," +
+    "org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration"
 })
 class AgifyControllerTest {
 
@@ -36,6 +35,8 @@ class AgifyControllerTest {
     void shouldReturnAgePrediction() {
         AgifyResponse mockResponse = new AgifyResponse("Michael", 62, 108496, "US");
 
+        // Cuando se llame a getPredictedAge con cualquier string para 'name' y 'countryId',
+        // devuelve un Mono con nuestra mockResponse.
         when(agifyService.getPredictedAge(anyString(), anyString()))
                 .thenReturn(Mono.just(mockResponse));
 
@@ -59,7 +60,7 @@ class AgifyControllerTest {
     void shouldReturnAgePredictionWithoutCountryId() {
         AgifyResponse mockResponse = new AgifyResponse("Maria", 30, 50000, null);
 
-        when(agifyService.getPredictedAge(anyString(), Mockito.eq(null)))
+        when(agifyService.getPredictedAge(anyString(), argThat(countryId -> countryId == null || countryId.isEmpty())))
                 .thenReturn(Mono.just(mockResponse));
 
         webTestClient.get()
