@@ -12,9 +12,18 @@ import reactor.core.publisher.Mono;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import org.mockito.Mockito; // IMPORTACIÓN AÑADIDA: Necesaria para Mockito.eq()
+import org.mockito.Mockito;
+import org.springframework.test.context.TestPropertySource; // Nueva importación
 
 @WebFluxTest(AgifyController.class)
+// Se añade @TestPropertySource para excluir auto-configuraciones comunes que pueden causar fallos en el contexto
+// Ajusta estas exclusiones según las dependencias reales de tu aplicación si el problema persiste.
+@TestPropertySource(properties = {
+    "spring.autoconfigure.exclude=" +
+    "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration," + // Excluye configuración de DataSource
+    "org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration," + // Excluye configuración de JPA/Hibernate
+    "org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration" // Excluye Spring Security Reactivo si lo usas
+})
 class AgifyControllerTest {
 
     @Autowired
@@ -50,7 +59,6 @@ class AgifyControllerTest {
     void shouldReturnAgePredictionWithoutCountryId() {
         AgifyResponse mockResponse = new AgifyResponse("Maria", 30, 50000, null);
 
-        // Se corrigió el error de compilación añadiendo 'import org.mockito.Mockito;'
         when(agifyService.getPredictedAge(anyString(), Mockito.eq(null)))
                 .thenReturn(Mono.just(mockResponse));
 
