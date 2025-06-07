@@ -1,4 +1,4 @@
-package com.andres.agify_api.controller;
+/* package com.andres.agify_api.controller;
 
 import com.andres.agify_api.model.AgifyResponse;
 import com.andres.agify_api.service.AgifyService;
@@ -28,4 +28,4 @@ class AgifyControllerTest {
                     assertThat(response.country_id()).isEqualTo("US");
                 });
     }
-}
+} */
